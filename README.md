@@ -17,4 +17,4 @@ An interactive social media web application where users can add and remove photo
 
 This webpage is deployed to Github pages.
 
-Deployment Link:
+Deployment Link: https://mspeggy.github.io/se_project_spots/
