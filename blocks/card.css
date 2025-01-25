@@ -2,11 +2,18 @@
   max-width: 413px;
 }
 
+.card__title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .card__image {
   height: 413px;
   width: 100%;
   object-fit: cover;
   display: block;
+  border-radius: 15px;
 }
 
 .card__content {
@@ -22,6 +29,8 @@
   border: none;
   background-color: transparent;
   opacity: 40%;
+  margin-left: 20px;
+  max-width: 353px;
 }
 
 @media screen and (max-width: 627px) {
