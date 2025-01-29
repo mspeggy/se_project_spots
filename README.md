@@ -18,3 +18,5 @@ An interactive social media web application where users can add and remove photo
 This webpage is deployed to Github pages.
 
 Deployment Link: https://mspeggy.github.io/se_project_spots/
+
+Video Overview of the Spots Project : https://www.loom.com/share/f3245ba4d63e40a694424c0181e4ed55?sid=b4cfea91-5a95-4824-a5c0-18eaf9b93d96
