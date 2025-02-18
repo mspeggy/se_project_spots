@@ -88,5 +88,5 @@
 }
 
 .modal__submit-btn {
-  max-width: none;
+  width: 100%;
 }
