@@ -33,6 +33,7 @@ const profileAddButton = document.querySelector(".profile__add-btn");
 // Form elements
 const editModal = document.querySelector("#edit-modal");
 const editFormElement = editModal.querySelector(".modal__form");
+//const profileForm = document.forms["profile-form"];
 const editModalCloseBtn = editModal.querySelector(".modal__close-btn");
 const editModalNameInput = editModal.querySelector("#profile-name-input");
 const editModalDescriptionInput = editModal.querySelector(
@@ -77,8 +78,10 @@ function getCardElement(data) {
 
   // select the element
   cardLikeBtn.addEventListener("click", () => {
-  cardLikeBtn.classList.toggle("card__like-btn_liked");
+    cardLikeBtn.classList.toggle("card__like-btn_liked");
   });
+  /*You need to format the markup (and code) to show indentation and to make the code more readable. 
+  You can do that with Prettier or a combination SHIFT + ALT + F*/
   // add the event listener
   // write code that handles the event
 
@@ -135,6 +138,19 @@ editModalCloseBtn.addEventListener("click", () => {
   closeModal(editModal);
 });
 
+  /* Make a universal handler for any close buttons.
+ // Find all close buttons
+const closeButtons = document.querySelectorAll('.modal__close');
+
+closeButtons.forEach((button) => {
+  // Find the closest popup only once
+  const popup = button.closest('.modal');
+  // Set the listener
+  button.addEventListener('click', () => closeModal(popup));
+}); 
+That’s why we make universal css classes for similar elements: here it’s modal__close for any close button.
+So now you can add 100 modals: their close buttons will be handled automatically.*/
+
 profileAddButton.addEventListener("click", () => {
   //editModalBtn.addEventListener("click", openModal);
   openModal(cardModal);
@@ -159,3 +175,13 @@ initialCards.forEach((item) => {
   const cardEl = getCardElement(item);
   cardsList.append(cardEl);
 });
+/* // The function accepts a card object and a method of adding to the section
+// The method is initially `prepend`, but you can pass `append` 
+function renderCard(item, method = "prepend") {
+  
+  const cardElement = getCardElement(item);
+  // Add the card into the section using the method
+  cardsList[ method ](cardElement);
+}
+Every DOM element is an object with methods, that’s why you can get the methods in 2 ways: cardsList.prepend(…) (with a dot) or cardsList["prepend"](…). It’s the same.
+This way you’ll not duplicate the code of card creation in 2 or more places in the code.*/
