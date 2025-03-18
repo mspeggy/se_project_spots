@@ -43,19 +43,20 @@ const editModalDescriptionInput = editModal.querySelector(
 const cardModal = document.querySelector("#add-card-modal");
 const cardForm = cardModal.querySelector(".modal__form");
 const cardModalCloseBtn = cardModal.querySelector(".modal__close-btn");
-const cardNameInput =  cardModal.querySelector("#add-card-name-input");
-const cardLinkInput =  cardModal.querySelector("#add-card-link-input");
- 
+const cardNameInput = cardModal.querySelector("#add-card-name-input");
+const cardLinkInput = cardModal.querySelector("#add-card-link-input");
+
 //select the modal
-const closeButton = document.querySelector('.modal__close_type_preview');
+const closeButton = document.querySelector(".modal__close_type_preview");
 const previewModal = document.querySelector("#preview-modal");
 const previewModalImageEl = previewModal.querySelector(".modal__image");
 const previewModalCaptionEl = previewModal.querySelector(".modal__caption");
+
 // Card related elements
 const cardTemplate = document.querySelector("#card-template");
 const cardsList = document.querySelector(".cards__list");
 
-function handleDeleteCard (evt) {
+function handleDeleteCard(evt) {
   const card = evt.target.closest(".card");
   card.remove();
 }
@@ -67,9 +68,9 @@ function getCardElement(data) {
 
   const cardNameEl = cardElement.querySelector(".card__title");
   const cardImageEl = cardElement.querySelector(".card__image");
-  const cardLikeBtn = cardElement.querySelector(".card__like-btn")
-  const cardDeleteBtn = cardElement.querySelector(".card__delete-btn")
-  
+  const cardLikeBtn = cardElement.querySelector(".card__like-btn");
+  const cardDeleteBtn = cardElement.querySelector(".card__delete-btn");
+
   // select the delete button
 
   cardNameEl.textContent = data.name;
@@ -85,17 +86,18 @@ function getCardElement(data) {
   // add the event listener
   // write code that handles the event
 
-  cardImageEl.addEventListener("click", () => { 
+  cardImageEl.addEventListener("click", () => {
     openModal(previewModal);
     previewModalImageEl.textContent = data.name;
     previewModalImageEl.src = data.link;
     previewModalImageEl.alt = data.name;
+    previewModalCaptionEl.textContent = data.name;
   });
 
   // set the listener on the delete button
   // The handler should remove the card from the DOM
 
-  cardDeleteBtn.addEventListener("click", handleDeleteCard) 
+  cardDeleteBtn.addEventListener("click", handleDeleteCard);
 
   return cardElement;
 }
@@ -123,7 +125,7 @@ function handleAddCardSubmit(evt) {
   const cardEl = getCardElement(inputValues);
   cardsList.prepend(cardEl);
   closeModal(cardModal);
-  cardForm.reset()
+  cardForm.reset();
 }
 
 profileEditButton.addEventListener("click", () => {
@@ -138,7 +140,7 @@ editModalCloseBtn.addEventListener("click", () => {
   closeModal(editModal);
 });
 
-  /* Make a universal handler for any close buttons.
+/* Make a universal handler for any close buttons.
  // Find all close buttons
 const closeButtons = document.querySelectorAll('.modal__close');
 
@@ -155,7 +157,6 @@ profileAddButton.addEventListener("click", () => {
   //editModalBtn.addEventListener("click", openModal);
   openModal(cardModal);
 });
-
 
 cardModalCloseBtn.addEventListener("click", () => {
   //editModalCloseBtn.addEventListener("click", closeModal);
