@@ -167,16 +167,17 @@
   .modal__label {
     font-family: Poppins, Arial, Helvetica, sans-serif;
     font-size: 16px;
-    width: 85px;
+   
   }
 
   .modal__input {
     font-family: Poppins, Arial, Helvetica, sans-serif;
     font-size: 16px;
-    width: 204px;
-    height: 16px;
+    max-width: 264px;
+    width: 100%;
     line-height: 100%;
     letter-spacing: 0;
+    box-sizing: border-box;
   }
 
   .modal__image {
