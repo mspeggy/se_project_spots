@@ -1,3 +1,5 @@
+//TODO pass settings object to the validation functions that are called in this file
+
 const initialCards = [
   {
     name: "Val Thorens",
@@ -24,6 +26,7 @@ const initialCards = [
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/6-photo-by-moritz-feldmann-from-pexels.jpg",
   },
 ];
+
 // Profile elements
 const profileEditButton = document.querySelector(".profile__edit-btn");
 const profileName = document.querySelector(".profile__name");
@@ -42,6 +45,7 @@ const editModalDescriptionInput = editModal.querySelector(
 
 const cardModal = document.querySelector("#add-card-modal");
 const cardForm = cardModal.querySelector(".modal__form");
+const cardSubmitBtn = cardModal.querySelector(".modal__submit-btn");
 const cardModalCloseBtn = cardModal.querySelector(".modal__close-btn");
 const cardNameInput = cardModal.querySelector("#add-card-name-input");
 const cardLinkInput = cardModal.querySelector("#add-card-link-input");
@@ -102,11 +106,42 @@ function getCardElement(data) {
   return cardElement;
 }
 
-function openModal(modal) {
+const modals = document.querySelectorAll(".modal");
+modals.forEach((modal) => {
+  modal.addEventListener("mousedown", function (event) {
+    if (event.target.classList.contains("modal")) {
+      closeModal(modal);
+    }
+  });
+});
+
+function closeModalOnEscape(evt) {
+  console.log(evt.key)
+if (evt.key==="Escape") {
+  console.log("Escape was pressed")
+  // use document.querySelector to find the modal with modal_opened
+  // use .classList.remove to remove the modal_opened class
+  const modal = document.querySelector('.modal_opened'); 
+  modal.classList.remove('modal_opened');
+}
+}
+
+function openModal(modal) { 
+  console.log("running")
+  console.log("Opening modal")
+  modal.classList.add("modal_opened");
+  document.addEventListener('keydown', closeModalOnEscape); 
+} 
+
+function closeModal(modal) {
+  document.removeEventListener('keydown', closeModalOnEscape); 
+} 
+
+//function openModal(modal) {
   //editModalNameInput.value = profileName.textContent;
   ///editModalDescriptionInput.value = profileDescription.textContent;
-  modal.classList.add("modal_opened");
-}
+  
+//}
 
 function closeModal(modal) {
   modal.classList.remove("modal_opened");
@@ -117,6 +152,7 @@ function handleEditFormSubmit(evt) {
   profileName.textContent = editModalNameInput.value;
   profileDescription.textContent = editModalDescriptionInput.value;
   closeModal(editModal);
+  editFormElement.reset();
 }
 
 function handleAddCardSubmit(evt) {
@@ -124,6 +160,7 @@ function handleAddCardSubmit(evt) {
   const inputValues = { name: cardNameInput.value, link: cardLinkInput.value };
   const cardEl = getCardElement(inputValues);
   cardsList.prepend(cardEl);
+  disableButton(cardSubmitBtn, settings);
   closeModal(cardModal);
   cardForm.reset();
 }
@@ -132,6 +169,12 @@ profileEditButton.addEventListener("click", () => {
   //profileEditButton.addEventListener("click", openModal);
   editModalNameInput.value = profileName.textContent;
   editModalDescriptionInput.value = profileDescription.textContent;
+  //OPTIONAL
+  resetValidation(
+    editModal,
+    [editModalNameInput, editModalDescriptionInput],
+    settings
+  );
   openModal(editModal);
 });
 
