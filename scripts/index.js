@@ -92,7 +92,6 @@ function getCardElement(data) {
 
   cardImageEl.addEventListener("click", () => {
     openModal(previewModal);
-    previewModalImageEl.textContent = data.name;
     previewModalImageEl.src = data.link;
     previewModalImageEl.alt = data.name;
     previewModalCaptionEl.textContent = data.name;
@@ -116,25 +115,17 @@ modals.forEach((modal) => {
 });
 
 function closeModalOnEscape(evt) {
-  console.log(evt.key)
 if (evt.key==="Escape") {
-  console.log("Escape was pressed")
   // use document.querySelector to find the modal with modal_opened
   // use .classList.remove to remove the modal_opened class
   const modal = document.querySelector('.modal_opened'); 
-  modal.classList.remove('modal_opened');
-}
+  closeModal(modal);
+  }
 }
 
 function openModal(modal) { 
-  console.log("running")
-  console.log("Opening modal")
   modal.classList.add("modal_opened");
   document.addEventListener('keydown', closeModalOnEscape); 
-} 
-
-function closeModal(modal) {
-  document.removeEventListener('keydown', closeModalOnEscape); 
 } 
 
 //function openModal(modal) {
@@ -144,6 +135,7 @@ function closeModal(modal) {
 //}
 
 function closeModal(modal) {
+  document.removeEventListener('keydown', closeModalOnEscape);
   modal.classList.remove("modal_opened");
 }
 

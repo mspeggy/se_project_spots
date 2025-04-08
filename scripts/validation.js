@@ -48,14 +48,14 @@ const toggleButtonState = (inputList, buttonElement, config) => {
     disableButton(buttonElement, config);
   } else {
     buttonElement.disabled = false;
-    buttonElement.classList.remove("modal__submit-btn_disabled");
+    buttonElement.classList.remove(config.inactiveButtonClass);
     // remove the disabled class
   }
 };
 
 const disableButton = (buttonElement, config) => {
   buttonElement.disabled = true;
-  buttonElement.classList.add("modal__submit-btn_disabled");
+  buttonElement.classList.add(config.inactiveButtonClass);
   // Add a modifier class to the btnEl for gray look
   //also style in css
 };
