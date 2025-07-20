@@ -1,31 +1,49 @@
-//TODO pass settings object to the validation functions that are called in this file
+import "./index.css";
+import { enableValidation, validationConfig } from "./validate.js";
+import Api from"../scripts/validation.js"
 
-const initialCards = [
-  {
-    name: "Val Thorens",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/1-photo-by-moritz-feldmann-from-pexels.jpg",
-  },
-  {
-    name: "Restaurant terrace",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/2-photo-by-ceiline-from-pexels.jpg",
-  },
-  {
-    name: "An outdoor cafe",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/3-photo-by-tubanur-dogan-from-pexels.jpg",
-  },
-  {
-    name: "A very long bridge, over the forest and through the trees",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/4-photo-by-maurice-laschet-from-pexels.jpg",
-  },
-  {
-    name: "Tunnel with morning light",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/5-photo-by-van-anh-nguyen-from-pexels.jpg",
-  },
-  {
-    name: "Mountain house",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/6-photo-by-moritz-feldmann-from-pexels.jpg",
-  },
-];
+// const initialCards = [
+//   {
+//     name: "Val Thorens",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/1-photo-by-moritz-feldmann-from-pexels.jpg",
+//   },
+//   {
+//     name: "Restaurant terrace",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/2-photo-by-ceiline-from-pexels.jpg",
+//   },
+//   {
+//     name: "An outdoor cafe",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/3-photo-by-tubanur-dogan-from-pexels.jpg",
+//   },
+//   {
+//     name: "A very long bridge, over the forest and through the trees",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/4-photo-by-maurice-laschet-from-pexels.jpg",
+//   },
+//   {
+//     name: "Tunnel with morning light",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/5-photo-by-van-anh-nguyen-from-pexels.jpg",
+//   },
+//   {
+//     name: "Mountain house",
+//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/6-photo-by-moritz-feldmann-from-pexels.jpg",
+//   },
+// ];
+
+const api = new Api({
+  baseUrl: "https://around-api.en.tripleten-services.com/v1",
+  headers: {
+    authorization: "f14e21ea-8f06-4616-983e-92c4689bb859",
+    "Content-Type": "application/json"
+  }
+});
+
+api.getInitialCards().then((initialCards) => {
+  initialCards.forEach((item) => {
+  const cardEl = getCardElement(item);
+  cardsList.append(cardEl);
+});
+});
+  
 
 // Profile elements
 const profileEditButton = document.querySelector(".profile__edit-btn");
@@ -115,27 +133,21 @@ modals.forEach((modal) => {
 });
 
 function closeModalOnEscape(evt) {
-if (evt.key==="Escape") {
-  // use document.querySelector to find the modal with modal_opened
-  // use .classList.remove to remove the modal_opened class
-  const modal = document.querySelector('.modal_opened'); 
-  closeModal(modal);
+  if (evt.key === "Escape") {
+    // use document.querySelector to find the modal with modal_opened
+    // use .classList.remove to remove the modal_opened class
+    const modal = document.querySelector(".modal_opened");
+    closeModal(modal);
   }
 }
 
-function openModal(modal) { 
+function openModal(modal) {
   modal.classList.add("modal_opened");
-  document.addEventListener('keydown', closeModalOnEscape); 
-} 
-
-//function openModal(modal) {
-  //editModalNameInput.value = profileName.textContent;
-  ///editModalDescriptionInput.value = profileDescription.textContent;
-  
-//}
+  document.addEventListener("keydown", closeModalOnEscape);
+}
 
 function closeModal(modal) {
-  document.removeEventListener('keydown', closeModalOnEscape);
+  document.removeEventListener("keydown", closeModalOnEscape);
   modal.classList.remove("modal_opened");
 }
 
@@ -175,6 +187,8 @@ editModalCloseBtn.addEventListener("click", () => {
   closeModal(editModal);
 });
 
+enableValidation(validationConfig);
+
 /* Make a universal handler for any close buttons.
  // Find all close buttons
 const closeButtons = document.querySelectorAll('.modal__close');
@@ -207,10 +221,7 @@ editFormElement.addEventListener("submit", handleEditFormSubmit);
 //editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
 
-initialCards.forEach((item) => {
-  const cardEl = getCardElement(item);
-  cardsList.append(cardEl);
-});
+
 /* // The function accepts a card object and a method of adding to the section
 // The method is initially `prepend`, but you can pass `append` 
 function renderCard(item, method = "prepend") {
