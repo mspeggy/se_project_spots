@@ -120,11 +120,10 @@
   cursor: pointer;
 }
 
-.modal__error {
+.modal__error_visible {
   display: block;
-  color: #ff0000;
-  font-size: 16px;
-  margin-top: 8px;
+  color: red;
+  font-size: 12px;
 }
 
 .modal__submit-btn {
@@ -152,6 +151,15 @@
   position: absolute;
   letter-spacing: 0;
 }
+
+.modal__delete-btn {
+
+}
+
+.modal__title {
+  
+}
+
 
 @media screen and (max-width: 627px) {
   .modal {

@@ -1,234 +1,216 @@
 import "./index.css";
-import { enableValidation, validationConfig } from "./validate.js";
-import Api from"../scripts/validation.js"
+import {
+  enableValidation,
+  validationConfig,
+  resetValidation,
+} from "../scripts/validation.js";
+import Api from "../utils/Api.js";
 
-// const initialCards = [
-//   {
-//     name: "Val Thorens",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/1-photo-by-moritz-feldmann-from-pexels.jpg",
-//   },
-//   {
-//     name: "Restaurant terrace",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/2-photo-by-ceiline-from-pexels.jpg",
-//   },
-//   {
-//     name: "An outdoor cafe",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/3-photo-by-tubanur-dogan-from-pexels.jpg",
-//   },
-//   {
-//     name: "A very long bridge, over the forest and through the trees",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/4-photo-by-maurice-laschet-from-pexels.jpg",
-//   },
-//   {
-//     name: "Tunnel with morning light",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/5-photo-by-van-anh-nguyen-from-pexels.jpg",
-//   },
-//   {
-//     name: "Mountain house",
-//     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/6-photo-by-moritz-feldmann-from-pexels.jpg",
-//   },
-// ];
-
+// Initialize API
 const api = new Api({
   baseUrl: "https://around-api.en.tripleten-services.com/v1",
   headers: {
     authorization: "f14e21ea-8f06-4616-983e-92c4689bb859",
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+  },
 });
-
-api.getInitialCards().then((initialCards) => {
-  initialCards.forEach((item) => {
-  const cardEl = getCardElement(item);
-  cardsList.append(cardEl);
-});
-});
-  
 
 // Profile elements
 const profileEditButton = document.querySelector(".profile__edit-btn");
+const profileAddButton = document.querySelector(".profile__add-btn");
 const profileName = document.querySelector(".profile__name");
 const profileDescription = document.querySelector(".profile__description");
-const profileAddButton = document.querySelector(".profile__add-btn");
+const avatarImage = document.querySelector(".profile__avatar");
+const avatarEditButton = document.querySelector(".profile__avatar-btn");
 
-// Form elements
+
+// Edit profile modal elements
 const editModal = document.querySelector("#edit-modal");
 const editFormElement = editModal.querySelector(".modal__form");
-//const profileForm = document.forms["profile-form"];
 const editModalCloseBtn = editModal.querySelector(".modal__close-btn");
 const editModalNameInput = editModal.querySelector("#profile-name-input");
 const editModalDescriptionInput = editModal.querySelector(
   "#profile-description-input"
 );
 
+// Add card modal elements
 const cardModal = document.querySelector("#add-card-modal");
 const cardForm = cardModal.querySelector(".modal__form");
-const cardSubmitBtn = cardModal.querySelector(".modal__submit-btn");
 const cardModalCloseBtn = cardModal.querySelector(".modal__close-btn");
 const cardNameInput = cardModal.querySelector("#add-card-name-input");
 const cardLinkInput = cardModal.querySelector("#add-card-link-input");
 
-//select the modal
-const closeButton = document.querySelector(".modal__close_type_preview");
+// Avatar modal elements
+const avatarModal = document.querySelector("#avatar-modal");
+const avatarForm = avatarModal.querySelector("#edit-avatar-form");
+const avatarModalCloseBtn = avatarModal.querySelector(".modal__close-btn");
+const avatarLinkInput = avatarModal.querySelector("#profile-avatar-input");
+
+// Preview modal elements
 const previewModal = document.querySelector("#preview-modal");
 const previewModalImageEl = previewModal.querySelector(".modal__image");
 const previewModalCaptionEl = previewModal.querySelector(".modal__caption");
+const previewModalCloseBtn = previewModal.querySelector(".modal__close");
 
-// Card related elements
+// Card template and container
 const cardTemplate = document.querySelector("#card-template");
 const cardsList = document.querySelector(".cards__list");
 
-function handleDeleteCard(evt) {
-  const card = evt.target.closest(".card");
-  card.remove();
-}
-
+// ----- Card Generator function -----
 function getCardElement(data) {
   const cardElement = cardTemplate.content
     .querySelector(".card")
     .cloneNode(true);
-
-  const cardNameEl = cardElement.querySelector(".card__title");
   const cardImageEl = cardElement.querySelector(".card__image");
-  const cardLikeBtn = cardElement.querySelector(".card__like-btn");
-  const cardDeleteBtn = cardElement.querySelector(".card__delete-btn");
-
-  // select the delete button
+  const cardNameEl = cardElement.querySelector(".card__title");
+  const likeBtn = cardElement.querySelector(".card__like-btn");
+  const deleteBtn = cardElement.querySelector(".card__delete-btn");
 
   cardNameEl.textContent = data.name;
   cardImageEl.src = data.link;
   cardImageEl.alt = data.name;
 
-  // select the element
-  cardLikeBtn.addEventListener("click", () => {
-    cardLikeBtn.classList.toggle("card__like-btn_liked");
+  likeBtn.addEventListener("click", () => {
+    likeBtn.classList.toggle("card__like-btn_liked");
   });
-  /*You need to format the markup (and code) to show indentation and to make the code more readable. 
-  You can do that with Prettier or a combination SHIFT + ALT + F*/
-  // add the event listener
-  // write code that handles the event
+
+  deleteBtn.addEventListener("click", () => {
+    cardElement.remove();
+    openModal(document.querySelector("#delete-modal"));
+  });
 
   cardImageEl.addEventListener("click", () => {
-    openModal(previewModal);
     previewModalImageEl.src = data.link;
     previewModalImageEl.alt = data.name;
     previewModalCaptionEl.textContent = data.name;
+    openModal(previewModal);
   });
-
-  // set the listener on the delete button
-  // The handler should remove the card from the DOM
-
-  cardDeleteBtn.addEventListener("click", handleDeleteCard);
 
   return cardElement;
 }
 
-const modals = document.querySelectorAll(".modal");
-modals.forEach((modal) => {
-  modal.addEventListener("mousedown", function (event) {
-    if (event.target.classList.contains("modal")) {
+// ----- Modal utilities -----
+function openModal(modal) {
+  modal.classList.add("modal_opened");
+  document.addEventListener("keydown", handleEscClose);
+}
+
+function closeModal(modal) {
+  modal.classList.remove("modal_opened");
+  document.removeEventListener("keydown", handleEscClose);
+}
+
+function handleEscClose(evt) {
+  if (evt.key === "Escape") {
+    const openModal = document.querySelector(".modal_opened");
+    if (openModal) closeModal(openModal);
+  }
+}
+
+// Close modal on overlay click
+document.querySelectorAll(".modal").forEach((modal) => {
+  modal.addEventListener("mousedown", (evt) => {
+    if (evt.target.classList.contains("modal")) {
       closeModal(modal);
     }
   });
 });
 
-function closeModalOnEscape(evt) {
-  if (evt.key === "Escape") {
-    // use document.querySelector to find the modal with modal_opened
-    // use .classList.remove to remove the modal_opened class
-    const modal = document.querySelector(".modal_opened");
-    closeModal(modal);
-  }
-}
+// ----- API calls and initial rendering -----
+api
+  .getAppInfo()
+  .then(([cards, userInfo]) => {
+    avatarImage.src = userInfo.avatar;
+    avatarImage.alt = userInfo.name;
+    profileName.textContent = userInfo.name;
+    profileDescription.textContent = userInfo.about;
 
-function openModal(modal) {
-  modal.classList.add("modal_opened");
-  document.addEventListener("keydown", closeModalOnEscape);
-}
+    cards.forEach((cardData) => {
+      const cardElement = getCardElement(cardData);
+      cardsList.append(cardElement);
+    });
+  })
+  .catch(console.error);
+  
 
-function closeModal(modal) {
-  document.removeEventListener("keydown", closeModalOnEscape);
-  modal.classList.remove("modal_opened");
-}
-
-function handleEditFormSubmit(evt) {
-  evt.preventDefault();
-  profileName.textContent = editModalNameInput.value;
-  profileDescription.textContent = editModalDescriptionInput.value;
-  closeModal(editModal);
-  editFormElement.reset();
-}
-
-function handleAddCardSubmit(evt) {
-  evt.preventDefault();
-  const inputValues = { name: cardNameInput.value, link: cardLinkInput.value };
-  const cardEl = getCardElement(inputValues);
-  cardsList.prepend(cardEl);
-  disableButton(cardSubmitBtn, settings);
-  closeModal(cardModal);
-  cardForm.reset();
-}
-
+// ----- Event listeners -----
+// Open Edit Profile modal
 profileEditButton.addEventListener("click", () => {
-  //profileEditButton.addEventListener("click", openModal);
   editModalNameInput.value = profileName.textContent;
   editModalDescriptionInput.value = profileDescription.textContent;
-  //OPTIONAL
   resetValidation(
     editModal,
     [editModalNameInput, editModalDescriptionInput],
-    settings
+    validationConfig
   );
   openModal(editModal);
 });
 
-editModalCloseBtn.addEventListener("click", () => {
-  //profileEditButton.addEventListener("click", closeModal);
-  closeModal(editModal);
-});
-
-enableValidation(validationConfig);
-
-/* Make a universal handler for any close buttons.
- // Find all close buttons
-const closeButtons = document.querySelectorAll('.modal__close');
-
-closeButtons.forEach((button) => {
-  // Find the closest popup only once
-  const popup = button.closest('.modal');
-  // Set the listener
-  button.addEventListener('click', () => closeModal(popup));
-}); 
-That’s why we make universal css classes for similar elements: here it’s modal__close for any close button.
-So now you can add 100 modals: their close buttons will be handled automatically.*/
-
+// Open Add Card modal
 profileAddButton.addEventListener("click", () => {
-  //editModalBtn.addEventListener("click", openModal);
+  resetValidation(cardModal, [cardNameInput, cardLinkInput], validationConfig);
+  cardForm.reset();
   openModal(cardModal);
 });
 
-cardModalCloseBtn.addEventListener("click", () => {
-  //editModalCloseBtn.addEventListener("click", closeModal);
+// Open Avatar modal
+avatarEditButton.addEventListener("click", () => {
+  // resetValidation(avatarModal, [avatarLinkInput], validationConfig);
+  // avatarForm.reset();
+  openModal(avatarModal);
+});
+
+// Close modal buttons
+editModalCloseBtn.addEventListener("click", () => closeModal(editModal));
+cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
+avatarModalCloseBtn.addEventListener("click", () => closeModal(avatarModal));
+previewModalCloseBtn.addEventListener("click", () => closeModal(previewModal));
+
+// ----- Form submission handlers -----
+// Submit profile edit
+editFormElement.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  api
+    .editUserInfo({
+      name: editModalNameInput.value,
+      about: editModalDescriptionInput.value,
+    })
+    .then((data) => {
+      profileName.textContent = data.name;
+      profileDescription.textContent = data.about;
+      closeModal(editModal);
+    })
+    .catch(console.error);
+});
+
+// Submit new card
+cardForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  const newCard = getCardElement({
+    name: cardNameInput.value,
+    link: cardLinkInput.value,
+  });
+  cardsList.prepend(newCard);
   closeModal(cardModal);
+  cardForm.reset();
 });
 
-closeButton.addEventListener("click", () => {
-  //closeButton.addEventListener("click", closeButton);
-  closeModal(previewModal);
+// Submit new avatar
+avatarForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  //console.log("👤 Avatar form submitted with URL:", avatarLinkInput.value);
+
+  api
+    .updateAvatar(avatarLinkInput.value)
+    .then((data) => {
+
+      avatarImage.src = data.avatar;
+      closeModal(avatarModal);
+      avatarForm.reset();
+    })
+    .catch(console.error);
 });
 
-editFormElement.addEventListener("submit", handleEditFormSubmit);
-//editFormElement.addEventListener("submit", handleEditFormSubmit);
-cardForm.addEventListener("submit", handleAddCardSubmit);
-
-
-/* // The function accepts a card object and a method of adding to the section
-// The method is initially `prepend`, but you can pass `append` 
-function renderCard(item, method = "prepend") {
-  
-  const cardElement = getCardElement(item);
-  // Add the card into the section using the method
-  cardsList[ method ](cardElement);
-}
-Every DOM element is an object with methods, that’s why you can get the methods in 2 ways: cardsList.prepend(…) (with a dot) or cardsList["prepend"](…). It’s the same.
-This way you’ll not duplicate the code of card creation in 2 or more places in the code.*/
+// ----- Enable form validation -----
+enableValidation(validationConfig);
