@@ -51,27 +51,42 @@ const checkInputValidity = (formElement, inputElement, config) => {
 };
 
 // === Button State Handling ===
+
+// Check if any input is invalid
 const hasInvalidInput = (inputList) => {
   return inputList.some((input) => !input.validity.valid);
 };
 
-const toggleButtonState = (inputList, buttonElement, config) => {
-  if (hasInvalidInput(inputList)) {
-    disableButton(buttonElement, config);
-  } else {
-    //buttonElement.disabled = false;
-    //buttonElement.classList.remove(config.inactiveButtonClass);
-  }
+// Enable the button
+const enableButton = (buttonElement, config) => {
+  buttonElement.disabled = false;
+  buttonElement.classList.remove(config.inactiveButtonClass);
 };
+
+// Disable the button
 const disableButton = (buttonElement, config) => {
   buttonElement.disabled = true;
   buttonElement.classList.add(config.inactiveButtonClass);
 };
 
-// === Set Event Listeners ===
+// Toggle button state based on input validity
+const toggleButtonState = (inputList, buttonElement, config) => {
+  if (hasInvalidInput(inputList)) {
+    disableButton(buttonElement, config);
+  } else {
+    enableButton(buttonElement, config);
+  }
+};
+
+   //=== Set Event Listeners ===
 const setEventListeners = (formElement, config) => {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
+
+  if (!buttonElement) {
+    //console.warn("Submit button not found for form:", formElement);
+    return;
+  }
 
   toggleButtonState(inputList, buttonElement, config);
 
@@ -83,10 +98,12 @@ const setEventListeners = (formElement, config) => {
   });
 };
 
+  
 // === Enable Validation on All Forms ===
-export const enableValidation = (config) => {
-  const formList = Array.from(document.querySelectorAll(config.formSelector));
+ export const enableValidation = (config) => {
+   const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
     setEventListeners(formElement, config);
   });
-};
+ };
+
