@@ -114,9 +114,8 @@ function getCardElement(data) {
 
   // Mark liked button if user already liked the card
   if (data.isLiked) {
-  
-      likeBtn.classList.add("card__like-btn_liked");
-    }
+    likeBtn.classList.add("card__like-btn_liked");
+  }
 
   // Like toggle
   likeBtn.addEventListener("click", () => {
@@ -130,7 +129,7 @@ function getCardElement(data) {
       .catch((err) => {
         console.error("Failed to toggle like:", err);
       });
-   });
+  });
 
   // Open image in preview modal
   cardImageEl.addEventListener("click", () => {
@@ -187,11 +186,8 @@ profileEditButton.addEventListener("click", () => {
 editFormElement.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
-  // TODO - Change text content to "Saving...";
   const submitBtn = evt.submitter;
-  //TODO - submitBtn.textContent = "Saving...";
   setButtonText(submitBtn, true);
-  
 
   api
     .editUserInfo({
@@ -205,11 +201,9 @@ editFormElement.addEventListener("submit", (evt) => {
     })
     .catch(console.error)
     .finally(() => {
-     // TODO - call setButtonText instead
-     //submitBtn.textContent = "Save";
       setButtonText(submitBtn, false, "Save");
     });
-  });
+});
 
 // Add Card Form
 profileAddButton.addEventListener("click", () => {
@@ -274,7 +268,7 @@ previewModalCloseBtn.addEventListener("click", () => closeModal(previewModal));
 deleteForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
-   const submitBtn = evt.submitter;
+  const submitBtn = evt.submitter;
   setButtonText(submitBtn, true, "Yes", "Deleting...");
 
   if (!selectedCardId || !selectedCardElement) return;

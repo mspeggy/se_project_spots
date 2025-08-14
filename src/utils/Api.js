@@ -12,9 +12,8 @@ class Api {
     return Promise.reject(`Error: ${res.status}`);
   }
 
-    // Get both cards + user info at once
+  // Get both cards + user info at once
   getAppInfo() {
-    //TODO - call getUserInfo it in this array
     return Promise.all([this.getInitialCards(), this.getUserInfo()]);
   }
 
@@ -32,14 +31,14 @@ class Api {
     }).then(this._checkResponse);
   }
 
-  // TODO - implement POST / cards
-addCard({ name, link }) {
-  return fetch(`${this._baseUrl}/cards`, {
-    method: "POST",
-    headers: this._headers,
-    body: JSON.stringify({ name, link })
-  }).then(this._handleResponse);
-}
+  // Implement POST / cards
+  addCard({ name, link }) {
+    return fetch(`${this._baseUrl}/cards`, {
+      method: "POST",
+      headers: this._headers,
+      body: JSON.stringify({ name, link }),
+    }).then(this._checkResponse);
+  }
 
   // Edit profile (name + about)
   editUserInfo({ name, about }) {
@@ -59,29 +58,19 @@ addCard({ name, link }) {
     }).then(this._checkResponse);
   }
 
-deleteCard(id) {
+  deleteCard(id) {
     return fetch(`${this._baseUrl}/cards/${id}`, {
       method: "DELETE",
       headers: this._headers,
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-    }
-    Promise.reject(`Error: ${res.status}`);
-  });
-}
+    }).then(this._checkResponse);
+  }
 
-likeStatus(id, isLiked) {
+  likeStatus(id, isLiked) {
     return fetch(`${this._baseUrl}/cards/${id}/likes`, {
       method: isLiked ? "DELETE" : "PUT",
       headers: this._headers,
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-    }
-    Promise.reject(`Error: ${res.status}`);
-  });
+    }).then(this._checkResponse);
+  }
 }
-}
- 
+
 export default Api;
